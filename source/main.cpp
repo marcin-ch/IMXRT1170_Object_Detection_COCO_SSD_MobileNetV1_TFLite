@@ -10,11 +10,14 @@
 #include "board_init.h"
 #include "demo_config.h"
 #include "demo_info.h"
-#include "image.h"
+#include "image_from_eiq.h"
 #include "image_utils.h"
 #include "model.h"
 #include "output_postproc.h"
 #include "timer.h"
+
+#include "GUI.h"
+#include "emwin_support.h"
 
 int main()
 {
@@ -22,6 +25,9 @@ int main()
     TIMER_Init();
 
     DEMO_PrintInfo();
+
+    GUI_Init();
+    GUI_DispStringAt("emWin TEST!", 0, 0);
 
     if (MODEL_Init() != kStatus_Success)
     {

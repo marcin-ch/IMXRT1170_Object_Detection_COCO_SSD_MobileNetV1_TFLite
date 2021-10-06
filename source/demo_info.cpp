@@ -9,7 +9,7 @@
 
 #include "demo_info.h"
 #include "demo_config.h"
-#include "image.h"
+#include "image_from_eiq.h"
 #include "model.h"
 
 void DEMO_PrintInfo()

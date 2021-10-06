@@ -15,6 +15,8 @@ void BOARD_Init()
 {
     BOARD_ConfigMPU();
     BOARD_InitLpuartPins();
+    BOARD_InitMipiPanelPins();
+    BOARD_MIPIPanelTouch_I2C_Init();
     BOARD_BootClockRUN();
     BOARD_ResetDisplayMix();
     BOARD_InitDebugConsole();
