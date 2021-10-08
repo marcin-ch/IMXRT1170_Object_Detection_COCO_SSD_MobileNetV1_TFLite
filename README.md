@@ -10,7 +10,7 @@ What is more, with newer SDK (2.10.*) NXP moved from TensorFlow Lite to TensorFl
 
 This project is based also on example named *emwin_gui_demo_cm7* which shows how to use emWin graphics library.
 
-In conclusion, this project is a combination of two SDK examples: *tensorflow_lite_label_image_cm7* and *emwin_gui_demo_cm7* and uses TensorFlow Lite inference engine that is part of NXP [eIQ](https://www.nxp.com/design/software/development-software/eiq-ml-development-environment:EIQ) software package.
+**In conclusion**, this project is a combination of two SDK examples: *tensorflow_lite_label_image_cm7* and *emwin_gui_demo_cm7* and uses TensorFlow Lite inference engine that is part of NXP [eIQ](https://www.nxp.com/design/software/development-software/eiq-ml-development-environment:EIQ) software package.
 
 # Hardware
 * [MIMXRT1170-EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/i-mx-rt1170-evaluation-kit:MIMXRT1170-EVK) with attached:
@@ -273,7 +273,7 @@ Basically, you need to:
 2. Provide new image to work on
 3. Provide all operations used in object detection model
 4. Update machine learning code to get and interpret outputs from the object detection model
-    * please refer to *evkmimxrt1170_OD_TFLite/source/model/model.cpp* where this functionality has been covered
+    * please refer to *evkmimxrt1170_OD_TFLite/source/model/model.cpp* where this functionality has been covered, you can see changes [here](https://github.com/marcin-ch/IMXRT1170_Object_Detection_COCO_SSD_MobileNetV1_TFLite/commit/7aa82b71a3581fc364b32f027e5fcbe98636f999#diff-6d7188e06a96aa3c8fc97338e706c32605050da915dead69a9e2047c5239698d)
     * these changes are based on this [Github repo](https://github.com/YijinLiu/tf-cpu/blob/master/benchmark/obj_detect_lite.cc)
     > **Additional info**
     > * [TensorFlow Lite Object Detection example](https://www.tensorflow.org/lite/examples/object_detection/overview) contains useful info how to interpret model's outputs.
@@ -286,7 +286,7 @@ Use terminal such as Tera Term to get bit more detailed output from an applicati
 # Summary
 ![5_imxrt1170_object_detection_resized.jpg](/doc/github_readme_images/5_imxrt1170_object_detection_resized.jpg)
 
-Inference time is approximately **3,8 seconds**, so it limits possible use cases. In another [repository](https://github.com/marcin-ch/IMXRT1060_Object_Detection_COCO_SSD_MobileNetV1_TFLite) there is very similar project for i.MXRT1060 evaluation kit. Inference time is approximately **6 seconds**. It means, we got **35% of improvement of inference time** which should be not surprising as as i.MXRT1170 is the strongest representative of i.MXRT family so far. Important difference between i.MXRT1060 and i.MXRT1170 is maximum operating frequency, 600MHz and 1GHz respectively. For further details, please refer to very useful comparison of i.MXRT family [here](https://www.nxp.com/products/processors-and-microcontrollers/arm-microcontrollers/i-mx-rt-crossover-mcus:IMX-RT-SERIES).
+Inference time is approximately **3,8 seconds**, so it limits possible use cases. In another [repository](https://github.com/marcin-ch/IMXRT1060_Object_Detection_COCO_SSD_MobileNetV1_TFLite) there is very similar project for i.MXRT1060 evaluation kit. Inference time is approximately **6 seconds**. It means, we got **35% of improvement of inference time** which should be not surprising as i.MXRT1170 is the strongest representative of i.MXRT family so far. Important difference between i.MXRT1060 and i.MXRT1170 is maximum operating frequency, 600MHz and 1GHz respectively. For further details, please refer to very useful comparison of i.MXRT family [here](https://www.nxp.com/products/processors-and-microcontrollers/arm-microcontrollers/i-mx-rt-crossover-mcus:IMX-RT-SERIES).
 
 Inference results are very comparable, there is small offset in **banana** detection (**46%** from i.MXRT1170 versus **48%** from i.MXRT1060).
 
