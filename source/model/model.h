@@ -41,6 +41,7 @@ uint8_t* MODEL_GetOutputTensorData(tensor_dims_t* dims, tensor_type_t* type);
 void MODEL_ConvertInput(uint8_t* data, tensor_dims_t* dims, tensor_type_t type);
 status_t MODEL_RunInference();
 const char* MODEL_GetModelName();
+void MODEL_OD_Outputs_PostProc(int inferenceTime);
 
 #if defined(__cplusplus)
 }

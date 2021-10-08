@@ -13,7 +13,12 @@
 #include "tensorflow/lite/string_util.h"
 
 #include "model.h"
-#include "model_data.h"
+#include "ssd_mobilenet_v1_1_metadata_1.h"
+//#include "model_data.h"
+#include "labels.h"
+#include "GUI.h"
+#include "demo_config.h"
+#include "image_from_eiq.h"
 
 std::unique_ptr<tflite::FlatBufferModel> model;
 std::unique_ptr<tflite::Interpreter> s_interpreter;
@@ -23,7 +28,8 @@ extern void MODEL_RegisterOps(tflite::MutableOpResolver &resolver);
 
 status_t MODEL_Init()
 {
-    model = tflite::FlatBufferModel::BuildFromBuffer(model_data, model_data_len);
+	model = tflite::FlatBufferModel::BuildFromBuffer(ssd_mobilenet_v1_1_metadata_1_tflite, ssd_mobilenet_v1_1_metadata_1_tflite_len);
+//	model = tflite::FlatBufferModel::BuildFromBuffer(model_data, model_data_len);
     if (!model)
     {
         std::cerr << "Failed to load model.\r\n";
@@ -138,6 +144,95 @@ uint8_t* MODEL_GetOutputTensorData(tensor_dims_t* dims, tensor_type_t* type)
     TfLiteTensor* outputTensor = s_interpreter->tensor(output);
 
     return GetTensorData(outputTensor, dims, type);
+}
+
+template<typename T>
+T* TensorData(TfLiteTensor* tensor, int batch_index);
+
+template<>
+float* TensorData(TfLiteTensor* tensor, int batch_index) {
+	int nelems = 1;
+	for (int i = 1; i < tensor->dims->size; i++) nelems *= tensor->dims->data[i];
+	switch (tensor->type) {
+	case kTfLiteFloat32:
+		return tensor->data.f + nelems * batch_index;
+	default:
+		std::cout << "Should not reach here!";
+	}
+	return nullptr;
+}
+
+template<>
+uint8_t* TensorData(TfLiteTensor* tensor, int batch_index) {
+	int nelems = 1;
+	for (int i = 1; i < tensor->dims->size; i++) nelems *= tensor->dims->data[i];
+	switch (tensor->type) {
+	case kTfLiteUInt8:
+		return tensor->data.uint8 + nelems * batch_index;
+	default:
+		std::cout << "Should not reach here!";
+	}
+	return nullptr;
+}
+
+void MODEL_OD_Outputs_PostProc(int inferenceTime){
+	TfLiteTensor* output_locations_ = s_interpreter->tensor(s_interpreter->outputs()[0]);
+	TfLiteTensor* output_classes_ = s_interpreter->tensor(s_interpreter->outputs()[1]);
+	TfLiteTensor* output_scores_ = s_interpreter->tensor(s_interpreter->outputs()[2]);
+	TfLiteTensor* num_detections_ = s_interpreter->tensor(s_interpreter->outputs()[3]);
+
+	const float* detection_locations = TensorData<float>(output_locations_, 0);
+	const float* detection_classes = TensorData<float>(output_classes_, 0);
+	const float* detection_scores = TensorData<float>(output_scores_, 0);
+	const float* num_detections = TensorData<float>(num_detections_, 0);
+	const int num_detections_value = *num_detections;
+
+	std::cout << "----------------------------------------\r\n"
+              << "     Inference time: " << inferenceTime / 1000 << " ms\r\n"
+              << "----------------------------------------\r\n";
+
+	const uint8_t* static_image = IMAGE_ReadStaticImage();
+	int image_height = IMAGE_GetImageHeight();
+	int image_width = IMAGE_GetImageWidth();
+
+	GUI_SetBkColor(GUI_WHITE);
+	GUI_BMP_DrawScaled(static_image, 0, 0, IMAGE_SCALE, 1); //image enlarged xIMAGE_SCALE
+	GUI_SetBkColor(GUI_GRAY_D0); // to make light grey background for printing classes/class indexes
+	GUI_SetPenSize(6);
+
+	for (int i = 0; i < num_detections_value; i++){
+		const float class_idx = detection_classes[i];
+		const std::string cls = labels[int(class_idx)];
+//		const std::string cls = labels[detection_classes[i]];
+		const float score = detection_scores[i];
+
+		const int ymin = detection_locations[4 * i] * image_height * IMAGE_SCALE;
+		const int xmin = detection_locations[4 * i + 1] * image_width * IMAGE_SCALE;
+		const int ymax = detection_locations[4 * i + 2] * image_height * IMAGE_SCALE;
+		const int xmax = detection_locations[4 * i + 3] * image_width * IMAGE_SCALE;
+
+		int n = cls.length();
+		char class_name[n+1];
+		strcpy(class_name, cls.c_str()); // convert string to char to display it on LCD
+
+		char print_buf_score[10];
+
+		if(score * 100 > DETECTION_TRESHOLD) {
+			std::cout << "Detected " << cls << " with score " << (int)(score*100) << " [" << xmin << "," << ymin << ":" << xmax << "," << ymax << "]\r\n";
+
+			if(i==0){
+				GUI_SetColor(GUI_BLUE);
+			}
+			else{
+				GUI_SetColor(GUI_MAKE_COLOR(0x00FF0000/(i*256))); // print different colors for different classes
+			}
+
+			sprintf(print_buf_score, "%2d%%", (int)(score*100));
+			GUI_DrawRect(xmin, ymin, xmax, ymax); // print bounding boxes
+			GUI_DispStringAt(class_name, xmin+(5*IMAGE_SCALE), ymin+(5*IMAGE_SCALE)); // print recognized classes
+			GUI_DispStringAt(print_buf_score, xmin+(5*IMAGE_SCALE), ymin+(20*IMAGE_SCALE)); // print scores (confidence levels)
+		}
+	}
 }
 
 // Convert unsigned 8-bit image data to model input format in-place.

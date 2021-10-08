@@ -22,6 +22,9 @@ extern "C" {
 
 status_t IMAGE_GetImage(uint8_t* dstData, int32_t dstWidth, int32_t dstHeight, int32_t dstChannels);
 const char* IMAGE_GetImageName();
+const uint8_t* IMAGE_ReadStaticImage();
+const int IMAGE_GetImageHeight();
+const int IMAGE_GetImageWidth();
 
 #if defined(__cplusplus)
 }

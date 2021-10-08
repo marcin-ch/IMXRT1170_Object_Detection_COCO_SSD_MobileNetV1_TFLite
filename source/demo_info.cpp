@@ -14,8 +14,9 @@
 
 void DEMO_PrintInfo()
 {
-    std::cout << "Label image object recognition example using a TensorFlow Lite model." << EOL
+    std::cout << EOL << EOL << "Object detection example using a TensorFlow Lite model." << EOL
         << "Detection threshold: " << DETECTION_TRESHOLD << "%" << EOL
-        << "Expected category: " << IMAGE_GetImageName() << EOL
+		<< "Expected category: " << "Multiple objects, existing in COCO dataset" << EOL
+//		<< "Expected category: " << IMAGE_GetImageName() << EOL
         << "Model: " << MODEL_GetModelName() << EOL;
 }

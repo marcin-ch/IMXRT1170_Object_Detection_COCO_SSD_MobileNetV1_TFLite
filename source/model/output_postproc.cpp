@@ -13,7 +13,7 @@
 #include "output_postproc.h"
 #include "get_top_n.h"
 #include "demo_config.h"
-#include "labels.h"
+//#include "labels.h"
 
 status_t MODEL_ProcessOutput(const uint8_t* data, const tensor_dims_t* dims,
                              tensor_type_t type, int inferenceTime)
@@ -30,10 +30,10 @@ status_t MODEL_ProcessOutput(const uint8_t* data, const tensor_dims_t* dims,
     {
         auto result = topResults.front();
         confidence = result.first;
-        int index = result.second;
+//        int index = result.second;
         if (confidence * 100 > DETECTION_TRESHOLD)
         {
-            label = labels[index];
+//            label = labels[index];
         }
     }
 

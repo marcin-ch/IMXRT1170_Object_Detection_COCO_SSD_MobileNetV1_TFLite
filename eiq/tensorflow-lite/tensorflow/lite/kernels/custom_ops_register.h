@@ -26,6 +26,11 @@ TfLiteRegistration* Register_HASHTABLE();
 TfLiteRegistration* Register_HASHTABLE_FIND();
 TfLiteRegistration* Register_HASHTABLE_IMPORT();
 TfLiteRegistration* Register_HASHTABLE_SIZE();
+TfLiteRegistration* Register_DETECTION_POSTPROCESS();
+TfLiteRegistration* Register_TFLite_Detection_PostProcess() {
+  return Register_DETECTION_POSTPROCESS();
+}
+
 }
 }  // namespace ops
 }  // namespace tflite

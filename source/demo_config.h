@@ -8,9 +8,10 @@
 #ifndef _DEMO_CONFIG_H_
 #define _DEMO_CONFIG_H_
 
-#define DETECTION_TRESHOLD 23
+#define DETECTION_TRESHOLD 45
 #define NUM_RESULTS 1
-#define DEMO_VERBOSE false
+//#define DEMO_VERBOSE false
 #define EOL "\r\n"
+#define IMAGE_SCALE 2
 
 #endif // _DEMO_CONFIG_H_

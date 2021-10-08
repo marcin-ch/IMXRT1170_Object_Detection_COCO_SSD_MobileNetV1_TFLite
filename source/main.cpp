@@ -29,6 +29,16 @@ int main()
     GUI_Init();
     GUI_DispStringAt("emWin TEST!", 0, 0);
 
+    const uint8_t* static_image = IMAGE_ReadStaticImage();
+
+    GUI_SetBkColor(GUI_WHITE);
+    GUI_Clear();
+    GUI_SetBkColor(GUI_GREEN);
+    GUI_SetColor(GUI_WHITE);
+    GUI_SetFont(GUI_LARGE_FONT);
+    GUI_BMP_DrawScaled(static_image, 0, 0, IMAGE_SCALE, 1); //image enlarged xIMAGE_SCALE
+    GUI_DispStringAt("Image to process" , 0, 0);
+
     if (MODEL_Init() != kStatus_Success)
     {
         std::cerr << "Failed initializing model" << EOL;
@@ -39,12 +49,12 @@ int main()
     tensor_type_t inputType;
     uint8_t* inputData = MODEL_GetInputTensorData(&inputDims, &inputType);
 
-    tensor_dims_t outputDims;
-    tensor_type_t outputType;
-    uint8_t* outputData = MODEL_GetOutputTensorData(&outputDims, &outputType);
+//    tensor_dims_t outputDims;
+//    tensor_type_t outputType;
+//    uint8_t* outputData = MODEL_GetOutputTensorData(&outputDims, &outputType);
 
-    while (1)
-    {
+//    while (1)
+//    {
         /* Expected tensor dimensions: [batches, height, width, channels] */
         if (IMAGE_GetImage(inputData, inputDims.data[2], inputDims.data[1], inputDims.data[3]) != kStatus_Success)
         {
@@ -58,6 +68,11 @@ int main()
         MODEL_RunInference();
         auto endTime = TIMER_GetTimeInUS();
 
-        MODEL_ProcessOutput(outputData, &outputDims, outputType, endTime - startTime);
-    }
+        MODEL_OD_Outputs_PostProc(endTime - startTime);
+
+//        MODEL_ProcessOutput(outputData, &outputDims, outputType, endTime - startTime);
+
+        std::cout << "@@@ ! END ! @@@.\r\n";
+        for (;;) {}
+//    }
 }
